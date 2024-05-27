@@ -11,10 +11,11 @@
 .boardStyle {
   display: flex;
   flex-wrap: wrap;
-  width: 270px;
-  height: 270px;
+  width: 279px;
+  height: 279px;
+  margin: 0 10px 10px;
   background-color: #c6c6c6;
-  box-shadow: #808080;
+  border: inset 5px;
 }
 
 .cellStyle {
@@ -23,17 +24,30 @@
   justify-content: center;
   width: 30px;
   height: 30px;
+  border: solid 1px;
   border-color: #919191;
-  border-style: solid;
-  border-width: 1px;
+  border-width: 3px;
 }
 
 .board2 {
   display: flex;
   flex-wrap: wrap;
-  width: 460px;
+  width: 309px;
   height: 400px;
-  background-color: whitesmoke;
+  background-color: #c6c6c6;
+  border: outset 5px #fff;
+}
+
+.board3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 279px;
+  height: 80px;
+  margin: 10px;
+  background-color: #c6c6c6;
+  border: inset 5px #fff;
 }
 
 .imageStyle {
@@ -41,5 +55,38 @@
   display: flex;
   width: 30px;
   height: 30px;
+  margin: -3px;
   background: url('~/src/assets/images/icons.png') no-repeat;
+}
+
+.nikoStyle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: outset 3px #fff;
+}
+
+.timeStyle {
+  display: flex;
+  flex-wrap: wrap;
+  width: 60px;
+  height: 40px;
+  margin-right: 10px;
+  margin-left: 45px;
+  background-color: #000;
+  border: inset 1px #fff;
+}
+
+.bombCountStyle {
+  display: flex;
+  flex-wrap: wrap;
+  width: 60px;
+  height: 40px;
+  margin-right: 45px;
+  margin-left: 10px;
+  background-color: #000;
+  border: inset 1px #fff;
 }
