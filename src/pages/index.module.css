@@ -72,10 +72,13 @@
 .timeStyle {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   width: 60px;
   height: 40px;
   margin-right: 10px;
   margin-left: 45px;
+  color: red;
   background-color: #000;
   border: inset 1px #fff;
 }

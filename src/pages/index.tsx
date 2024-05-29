@@ -129,7 +129,7 @@ const Home = () => {
               style={{ backgroundPosition: `${11 * -30}px 0px` }}
             />
           </div>
-          <div className={styles.timeStyle} />
+          <div className={styles.timeStyle}>10</div>
         </div>
 
         <div className={styles.boardStyle}>
