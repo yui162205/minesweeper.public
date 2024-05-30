@@ -47,23 +47,41 @@ const Home = () => {
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   // ]);
 
-  const board = structuredClone(bombMap);
+  const board = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+  const checkAround = (x: number, y: number) => {
+    let bombCount = 0;
+    for (const [dy, dx] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
+      if (bombMap[ny][nx] === 1) {
+        bombCount += 1;
+      }
+    }
+    board[y][x] = bombMap[y][x] === 1 ? 11 : bombCount;
+    function checkAround(x, y) {
+      if (bombMap[ny][nx] === 0) {
+        board[y][x] = -1;
+      }
+    }
+  };
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (userInput[y][x] === 0) {
         board[y][x] = -1;
       } else {
-        let bombCount = 0;
-        for (const [dy, dx] of directions) {
-          const nx = x + dx;
-          const ny = y + dy;
-
-          if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
-          if (bombMap[ny][nx] === 1) {
-            bombCount += 1;
-          }
-        }
-        board[y][x] = bombMap[y][x] === 1 ? 11 : bombCount;
+        checkAround(x, y);
       }
     }
   }
@@ -74,7 +92,6 @@ const Home = () => {
       const bombX = Math.floor(Math.random() * 9);
       const bombY = Math.floor(Math.random() * 9);
       console.log(bombX, bombY);
-      // 付け足し
       if (x === bombX && y === bombY) {
         continue;
       }
