@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 import styles from './index.module.css';
 
 const directions = [
@@ -35,30 +35,11 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-  // const [board, setBoard] = useState([
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  // ]);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
-  const board = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ];
-  const checkAround = (x: number, y: number) => {
+  const checkAround = (board: number[][], x: number, y: number) => {
+    console.log('opencell');
+    console.log(checkAround);
     let bombCount = 0;
     for (const [dy, dx] of directions) {
       const nx = x + dx;
@@ -70,18 +51,27 @@ const Home = () => {
       }
     }
     board[y][x] = bombMap[y][x] === 1 ? 11 : bombCount;
-    function checkAround(x, y) {
-      if (bombMap[ny][nx] === 0) {
-        board[y][x] = -1;
+
+    if (bombMap[y][x] === 1) return;
+    for (const [dy, dx] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
+      if (bombCount === 0 && userInput[ny][nx] === 0 && bombMap[ny][nx] === 0) {
+        userInput[ny][nx] = 1;
+        checkAround(board, nx, ny);
       }
     }
   };
+
+  const board = structuredClone(bombMap);
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (userInput[y][x] === 0) {
         board[y][x] = -1;
       } else {
-        checkAround(x, y);
+        checkAround(board, x, y);
       }
     }
   }
@@ -117,6 +107,9 @@ const Home = () => {
     return bombMap;
   };
   const clickHandler = (x: number, y: number) => {
+    if (isGameOver === true) {
+      return;
+    }
     console.log(x, y);
     let bombCount = 0;
     for (let y = 0; y < 9; y++) {
@@ -125,6 +118,9 @@ const Home = () => {
           bombCount += 1;
         }
       }
+    }
+    if (bombMap[y][x] === 1) {
+      setIsGameOver(true);
     }
     if (bombCount === 0) {
       const newBombMap = structuredClone(bombMap);
@@ -143,7 +139,9 @@ const Home = () => {
           <div className={styles.nikoStyle}>
             <div
               className={styles.imageStyle}
-              style={{ backgroundPosition: `${11 * -30}px 0px` }}
+              style={{
+                backgroundPosition: isGameOver === true ? `${13 * -30}px 0px` : `${11 * -30}px 0px`,
+              }}
             />
           </div>
           <div className={styles.timeStyle}>10</div>
@@ -156,7 +154,9 @@ const Home = () => {
                 className={styles.cellStyle}
                 onClick={() => clickHandler(x, y)}
                 key={`${x}-${y}`}
-                style={{ borderColor: board[y][x] >= 0 ? '#909090' : '#fff #909090 #909090 #fff' }}
+                style={{
+                  borderColor: board[y][x] >= 0 ? '#909090' : '#fff #909090 #909090 #fff',
+                }}
               >
                 <div
                   className={styles.imageStyle}
@@ -170,5 +170,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;
