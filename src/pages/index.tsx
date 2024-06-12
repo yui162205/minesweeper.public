@@ -37,9 +37,18 @@ const Home = () => {
   ]);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
+  const isGameClear = () => {
+    let bombCount2 = 0;
+    for (let y = 0; y < 9; y++) {
+      for (let x = 0; x < 9; x++) {
+        if (board[y][x] !== -1 && bombMap[y][x] !== 1) {
+          bombCount2++;
+        }
+      }
+    }
+    return bombCount2 === 71;
+  };
   const checkAround = (board: number[][], x: number, y: number) => {
-    console.log('opencell');
-    console.log(checkAround);
     let bombCount = 0;
     for (const [dy, dx] of directions) {
       const nx = x + dx;
@@ -58,8 +67,7 @@ const Home = () => {
       const ny = y + dy;
 
       if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
-      if (bombCount === 0 && userInput[ny][nx] === 0 && bombMap[ny][nx] === 0) {
-        userInput[ny][nx] = 1;
+      if (bombCount === 0 && board[ny][nx] === -1 && bombMap[ny][nx] === 0) {
         checkAround(board, nx, ny);
       }
     }
@@ -71,6 +79,14 @@ const Home = () => {
       if (userInput[y][x] === 0) {
         board[y][x] = -1;
       } else {
+        checkAround(board, x, y);
+      }
+    }
+  }
+
+  for (let y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+      if (userInput[y][x] === 1) {
         checkAround(board, x, y);
       }
     }
@@ -101,13 +117,18 @@ const Home = () => {
       }
       bombPos.push([bombY, bombX]);
     }
+    for (let i = 0; i < 9; i++) {
+      bombPos.push([0, i]);
+    }
+    bombPos.push([1, 1]);
+
     for (const i of bombPos) {
       bombMap[i[1]][i[0]] = 1;
     }
     return bombMap;
   };
   const clickHandler = (x: number, y: number) => {
-    if (isGameOver === true) {
+    if (isGameOver || isGameClear()) {
       return;
     }
     console.log(x, y);
@@ -140,7 +161,11 @@ const Home = () => {
             <div
               className={styles.imageStyle}
               style={{
-                backgroundPosition: isGameOver === true ? `${13 * -30}px 0px` : `${11 * -30}px 0px`,
+                backgroundPosition: isGameOver
+                  ? `${13 * -30}px 0px`
+                  : isGameClear()
+                    ? `${12 * -30}px 0px`
+                    : `${11 * -30}px 0px`,
               }}
             />
           </div>
