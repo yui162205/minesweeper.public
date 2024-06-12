@@ -35,7 +35,13 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-  const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  let setIsGameOver = false;
+  const isGameOver = (x: number, y: number) => {
+    if (userInput[y][x] === 1 && bombMap[y][x] === 1) {
+      setIsGameOver = true;
+    }
+    return setIsGameOver;
+  };
 
   const isGameClear = () => {
     let bombCount2 = 0;
@@ -128,7 +134,7 @@ const Home = () => {
     return bombMap;
   };
   const clickHandler = (x: number, y: number) => {
-    if (isGameOver || isGameClear()) {
+    if (setIsGameOver === true || isGameClear()) {
       return;
     }
     console.log(x, y);
@@ -139,9 +145,6 @@ const Home = () => {
           bombCount += 1;
         }
       }
-    }
-    if (bombMap[y][x] === 1) {
-      setIsGameOver(true);
     }
     if (bombCount === 0) {
       const newBombMap = structuredClone(bombMap);
@@ -158,16 +161,21 @@ const Home = () => {
         <div className={styles.board3}>
           <div className={styles.bombCountStyle} />
           <div className={styles.nikoStyle}>
-            <div
-              className={styles.imageStyle}
-              style={{
-                backgroundPosition: isGameOver
-                  ? `${13 * -30}px 0px`
-                  : isGameClear()
-                    ? `${12 * -30}px 0px`
-                    : `${11 * -30}px 0px`,
-              }}
-            />
+            {board.map((row, y) =>
+              row.map((color, x) => (
+                <div
+                  className={styles.imageStyle}
+                  key={`${x}-${y}`}
+                  style={{
+                    backgroundPosition: isGameOver(x, y)
+                      ? `${13 * -30}px 0px`
+                      : isGameClear()
+                        ? `${12 * -30}px 0px`
+                        : `${11 * -30}px 0px`,
+                  }}
+                />
+              )),
+            )}
           </div>
           <div className={styles.timeStyle}>10</div>
         </div>

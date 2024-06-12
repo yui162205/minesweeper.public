@@ -51,8 +51,9 @@
 }
 
 .imageStyle {
-  z-index: 2;
-  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
   width: 30px;
   height: 30px;
   margin: -3px;
@@ -60,6 +61,7 @@
 }
 
 .nikoStyle {
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
