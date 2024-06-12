@@ -155,12 +155,41 @@ const Home = () => {
     setUserInput(newUserInputs);
   };
 
+  const resetBotan = () => {
+    setIsGameOver = false;
+    const newBombMap = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    setBombMap(newBombMap);
+
+    const newUserInputs = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    setUserInput(newUserInputs);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.board2}>
         <div className={styles.board3}>
           <div className={styles.bombCountStyle} />
-          <div className={styles.nikoStyle}>
+          <div className={styles.nicoStyle}>
             {board.map((row, y) =>
               row.map((color, x) => (
                 <div
@@ -173,6 +202,7 @@ const Home = () => {
                         ? `${12 * -30}px 0px`
                         : `${11 * -30}px 0px`,
                   }}
+                  onClick={() => resetBotan()}
                 />
               )),
             )}

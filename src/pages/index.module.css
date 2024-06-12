@@ -60,7 +60,7 @@
   background: url('~/src/assets/images/icons.png') no-repeat;
 }
 
-.nikoStyle {
+.nicoStyle {
   z-index: 2;
   display: flex;
   flex-wrap: wrap;
@@ -69,6 +69,10 @@
   width: 40px;
   height: 40px;
   border: outset 3px #fff;
+}
+
+.nicoStyle:active {
+  border: inset;
 }
 
 .timeStyle {
