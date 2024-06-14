@@ -123,10 +123,11 @@ const Home = () => {
       }
       bombPos.push([bombY, bombX]);
     }
-    for (let i = 0; i < 9; i++) {
-      bombPos.push([0, i]);
-    }
-    bombPos.push([1, 1]);
+    // 確認用（bombの左寄せ）
+    // for (let i = 0; i < 9; i++) {
+    //   bombPos.push([0, i]);
+    // }
+    // bombPos.push([1, 1]);
 
     for (const i of bombPos) {
       bombMap[i[1]][i[0]] = 1;
@@ -219,6 +220,7 @@ const Home = () => {
                 key={`${x}-${y}`}
                 style={{
                   borderColor: board[y][x] >= 0 ? '#909090' : '#fff #909090 #909090 #fff',
+                  backgroundColor: board[y][x] === 11 ? '#ffaaaa' : '#fff #909090 #909090 #fff',
                 }}
               >
                 <div
