@@ -107,7 +107,7 @@ const Home = () => {
       if (x === bombX && y === bombY) {
         continue;
       }
-
+      // ボムの配置の条件付け
       const double = [0];
       for (const i of bombPos) {
         if (i[1] === bombX && i[0] === bombY) {
@@ -147,6 +147,7 @@ const Home = () => {
         }
       }
     }
+    // わからない
     if (bombCount === 0) {
       const newBombMap = structuredClone(bombMap);
       setBombMap(bombSet(x, y, newBombMap));
@@ -225,7 +226,12 @@ const Home = () => {
               >
                 <div
                   className={styles.imageStyle}
-                  style={{ backgroundPosition: `${(board[y][x] - 1) * -30}px 0px` }}
+                  style={{
+                    backgroundPosition:
+                      isGameOver(x, y) && bombMap[y][x] === 1
+                        ? `${10 * -30}px 0px`
+                        : `${(board[y][x] - 1) * -30}px 0px`,
+                  }}
                 />
               </div>
             )),
