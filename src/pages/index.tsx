@@ -157,7 +157,7 @@ const Home = () => {
     setUserInput(newUserInputs);
   };
 
-  const resetBotan = () => {
+  const resetHandler = () => {
     setIsGameOver = false;
     const newBombMap = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -204,7 +204,7 @@ const Home = () => {
                         ? `${12 * -30}px 0px`
                         : `${11 * -30}px 0px`,
                   }}
-                  onClick={() => resetBotan()}
+                  onClick={() => resetHandler()}
                 />
               )),
             )}
@@ -220,9 +220,14 @@ const Home = () => {
                 onClick={() => clickHandler(x, y)}
                 key={`${x}-${y}`}
                 style={{
-                  borderColor: board[y][x] >= 0 ? '#909090' : '#fff #909090 #909090 #fff',
-                  backgroundColor: board[y][x] === 11 ? '#ffaaaa' : '#fff #909090 #909090 #fff',
+                  borderColor:
+                    board[y][x] >= 0 && board[y][x] !== 10
+                      ? '#909090'
+                      : '#fff #909090 #909090 #fff',
+                  backgroundColor:
+                    bombMap[y][x] && isGameOver(x, y) && userInput[y][x] ? '#ffaaaa' : '#c9c7c7',
                 }}
+                // 赤い表示をリセットしたい
               >
                 <div
                   className={styles.imageStyle}
