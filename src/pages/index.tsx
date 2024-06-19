@@ -35,9 +35,53 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
+  const checkAround = (board: number[][], x: number, y: number) => {
+    let bombCount = 0;
+    for (const [dy, dx] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
+
+      if (bombMap[ny][nx] === 1) {
+        bombCount += 1;
+      }
+      board[y][x] = bombMap[y][x] === 1 ? 11 : bombCount;
+    }
+
+    if (bombMap[y][x] === 1) return;
+    for (const [dy, dx] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
+      if (bombCount === 0 && board[ny][nx] === -1 && bombMap[ny][nx] === 0) {
+        checkAround(board, nx, ny);
+      }
+    }
+  };
+
+  const board = bombMap.map((row) => row.map(() => -1));
+
+  for (let y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+      if (userInput[y][x] === 1) {
+        checkAround(board, x, y);
+      }
+    }
+  }
+
   let setIsGameOver = false;
   const isGameOver = (x: number, y: number) => {
     if (userInput[y][x] === 1 && bombMap[y][x] === 1) {
+      for (let y = 0; y < 9; y++) {
+        for (let x = 0; x < 9; x++) {
+          if (bombMap[y][x] === 1 && userInput[y][x] !== 2) {
+            board[y][x] = 11;
+          }
+        }
+      }
       setIsGameOver = true;
     }
     return setIsGameOver;
@@ -54,56 +98,65 @@ const Home = () => {
     }
     return bombCount2 === 71;
   };
-  const checkAround = (board: number[][], x: number, y: number) => {
-    let bombCount = 0;
-    for (const [dy, dx] of directions) {
-      const nx = x + dx;
-      const ny = y + dy;
 
-      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
-      if (bombMap[ny][nx] === 1) {
-        bombCount += 1;
+  const clickHandler = (x: number, y: number) => {
+    if (setIsGameOver || isGameClear() || userInput[y][x] === 2) {
+      return;
+    }
+    let bombCount = 0;
+    for (let y = 0; y < 9; y++) {
+      for (let x = 0; x < 9; x++) {
+        if (bombMap[y][x] === 1) {
+          bombCount += 1;
+        }
       }
     }
-    board[y][x] = bombMap[y][x] === 1 ? 11 : bombCount;
 
-    if (bombMap[y][x] === 1) return;
-    for (const [dy, dx] of directions) {
-      const nx = x + dx;
-      const ny = y + dy;
+    if (bombCount === 0) {
+      const newBombMap = structuredClone(bombMap);
+      setBombMap(bombSet(x, y, newBombMap));
+    }
+    const newUserInputs = structuredClone(userInput);
+    newUserInputs[y][x] = 1;
+    setUserInput(newUserInputs);
+  };
 
-      if (nx < 0 || nx >= 9 || ny < 0 || ny >= 9) continue;
-      if (bombCount === 0 && board[ny][nx] === -1 && bombMap[ny][nx] === 0) {
-        checkAround(board, nx, ny);
-      }
+  const rightClickHandler = (x: number, y: number, event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    if (board[y][x] === -1) {
+      userInput[y][x] = 2;
+      const newUserInputs = structuredClone(userInput);
+      setUserInput(newUserInputs);
+    }
+    if (board[y][x] === 10) {
+      userInput[y][x] = 0;
+      const newUserInputs = structuredClone(userInput);
+      setUserInput(newUserInputs);
+    } else {
+      return;
     }
   };
 
-  const board = structuredClone(bombMap);
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
-      if (userInput[y][x] === 0) {
+      if (userInput[y][x] === 2 && board[y][x] === -1) {
+        board[y][x] = 10;
+      }
+      if (userInput[y][x] === 0 && board[y][x] === 10) {
         board[y][x] = -1;
-      } else {
-        checkAround(board, x, y);
       }
     }
   }
-
-  for (let y = 0; y < 9; y++) {
-    for (let x = 0; x < 9; x++) {
-      if (userInput[y][x] === 1) {
-        checkAround(board, x, y);
-      }
-    }
-  }
+  console.table(userInput);
+  console.table(board);
 
   const bombSet = (x: number, y: number, bombMap: number[][]) => {
     const bombPos: number[][] = [];
+    // 確認するときはこの下からコメントアウト
     while (bombPos.length < 10) {
       const bombX = Math.floor(Math.random() * 9);
       const bombY = Math.floor(Math.random() * 9);
-      console.log(bombX, bombY);
       if (x === bombX && y === bombY) {
         continue;
       }
@@ -134,29 +187,16 @@ const Home = () => {
     }
     return bombMap;
   };
-  const clickHandler = (x: number, y: number) => {
-    if (setIsGameOver === true || isGameClear()) {
-      return;
-    }
-    console.log(x, y);
-    let bombCount = 0;
+
+  if (isGameClear()) {
     for (let y = 0; y < 9; y++) {
       for (let x = 0; x < 9; x++) {
         if (bombMap[y][x] === 1) {
-          bombCount += 1;
+          board[y][x] = 10;
         }
       }
     }
-    // わからない
-    if (bombCount === 0) {
-      const newBombMap = structuredClone(bombMap);
-      setBombMap(bombSet(x, y, newBombMap));
-    }
-    const newUserInputs = structuredClone(userInput);
-    newUserInputs[y][x] = 1;
-    setUserInput(newUserInputs);
-  };
-
+  }
   const resetHandler = () => {
     setIsGameOver = false;
     const newBombMap = [
@@ -217,6 +257,9 @@ const Home = () => {
             row.map((color, x) => (
               <div
                 className={styles.cellStyle}
+                onContextMenu={(event) => {
+                  rightClickHandler(x, y, event);
+                }}
                 onClick={() => clickHandler(x, y)}
                 key={`${x}-${y}`}
                 style={{
@@ -225,17 +268,14 @@ const Home = () => {
                       ? '#909090'
                       : '#fff #909090 #909090 #fff',
                   backgroundColor:
-                    bombMap[y][x] && isGameOver(x, y) && userInput[y][x] ? '#ffaaaa' : '#c9c7c7',
+                    bombMap[y][x] && userInput[y][x] && isGameOver(x, y) ? '#ffaaaa' : '#c6c6c6',
                 }}
                 // 赤い表示をリセットしたい
               >
                 <div
                   className={styles.imageStyle}
                   style={{
-                    backgroundPosition:
-                      isGameOver(x, y) && bombMap[y][x] === 1
-                        ? `${10 * -30}px 0px`
-                        : `${(board[y][x] - 1) * -30}px 0px`,
+                    backgroundPosition: `${(board[y][x] - 1) * -30}px 0px`,
                   }}
                 />
               </div>
