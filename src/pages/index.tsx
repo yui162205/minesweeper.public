@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styles from './index.module.css';
 
 const directions = [
@@ -13,6 +13,8 @@ const directions = [
 ];
 
 const Home = () => {
+  // const [isGameOverBotan, setIsGameOverBotan] = useState(false);
+
   const [bombMap, setBombMap] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -87,7 +89,7 @@ const Home = () => {
     return setIsGameOver;
   };
 
-  const isGameClear = () => {
+  const isGameClear = useCallback(() => {
     let bombCount2 = 0;
     for (let y = 0; y < 9; y++) {
       for (let x = 0; x < 9; x++) {
@@ -97,12 +99,37 @@ const Home = () => {
       }
     }
     return bombCount2 === 71;
-  };
+  }, [board, bombMap]);
+
+  // タイマーの状態と管理
+  const [time, setTime] = useState(0);
+  // ゲームが終了したかのフラグ
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    if (isGameStarted) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    if (setIsGameOver === true || isGameClear()) {
+      setIsGameStarted(false);
+    }
+    return () => clearInterval(interval);
+  }, [isGameStarted, time, setIsGameOver, isGameClear]);
+
+  console.log('bomb');
+  console.table(bombMap);
 
   const clickHandler = (x: number, y: number) => {
     if (setIsGameOver || isGameClear() || userInput[y][x] === 2) {
       return;
     }
+    if (!isGameStarted) setIsGameStarted(true); // ゲーム開始時にタイマーをスタート
+
     let bombCount = 0;
     for (let y = 0; y < 9; y++) {
       for (let x = 0; x < 9; x++) {
@@ -198,7 +225,9 @@ const Home = () => {
     }
   }
   const resetHandler = () => {
-    setIsGameOver = false;
+    // setIsGameOverBotan(false);
+    setIsGameStarted(false);
+    setTime(0);
     const newBombMap = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -249,7 +278,7 @@ const Home = () => {
               )),
             )}
           </div>
-          <div className={styles.timeStyle}>10</div>
+          <div className={styles.timeStyle}>{time}</div>
         </div>
 
         <div className={styles.boardStyle}>
